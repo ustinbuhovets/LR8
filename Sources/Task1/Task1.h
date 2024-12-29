@@ -4,6 +4,7 @@
 #pragma once
 
 #include <iostream>
+#include <algorithm>
 #include <unistd.h>
 #include <ncursesw/ncurses.h>
 #include <locale.h>
@@ -27,13 +28,17 @@ typedef struct Bus {
 
 extern Bus* buses;
 
+void Line1();
 int BusTerminal();
 
 void ErrorMessage();
 void WriteToFile(Bus*&);
 void ReadFromFile(Bus*&);
-void InitializeBuses(Bus*&);
 void OutputBusesInfo(Bus*&);
 void FindFlight(Bus*&, int);
+void AddBus(Bus*&);
+void RemoveBus(Bus*&);
+void RedactBus(Bus*&);
+void SortBusesFunction(Bus*&);
 
 #endif

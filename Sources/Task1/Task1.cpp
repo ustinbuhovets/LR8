@@ -10,6 +10,6 @@ void Task1() {
   keypad(stdscr, TRUE);
   echo();
 
-  InitializeBuses(buses);
+  ReadFromFile(buses);
   BusTerminal();
 }
