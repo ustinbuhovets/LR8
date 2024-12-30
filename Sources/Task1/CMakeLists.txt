@@ -2,7 +2,7 @@ add_library(
   Task1Dir STATIC
   Task1.h
   Task1.cpp
-  Functions.cpp
+  Functions1.cpp
   Menus1.cpp
 )
 

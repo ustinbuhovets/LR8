@@ -1,5 +1,8 @@
-#include <StaticLibLR8.h>
+#include <Task2.h>
+
+Train* trains = nullptr;
 
 void Task2() {
-  std::cout << "HELLO\n";
+  ReadFromFile2(trains);
+  OutputTerminal();
 }

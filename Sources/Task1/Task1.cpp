@@ -1,6 +1,6 @@
 #include <Task1.h>
 
-Bus* buses = (Bus*)malloc(5 * sizeof(Bus));
+Bus* buses;
 
 void Task1() {
   setlocale(LC_ALL, "");
