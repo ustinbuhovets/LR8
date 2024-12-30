@@ -9,8 +9,12 @@ void WatchingTrains();
 void FindingTrains();
 void AddingTrains();
 void RemovingTrains();
+void RedactingTrains();
 /*  Reliant  */
 void CorrectDateInput(std::string&);
+void CorrectTimeInput(std::string&);
+void CorrectIntInput(int&);
+
 
 void OutputTerminal() {
   int Number;
@@ -58,15 +62,16 @@ void CallingMenus(int Status) {
       WatchingTrains();
       break;
     case 2:
-      // FindingTrains();
+      FindingTrains();
       break;
     case 3:
       AddingTrains();
       break;
     case 4:
-      // RemovingTrains();
+      RemovingTrains();
       break;
     case 5:
+      RedactingTrains();
       break;
     default:
       break;
@@ -78,7 +83,7 @@ void WatchingTrains() {
   std::cout << "  Доступные рейсы:\n";
   Line2();
   for (int i = 0; i < size2; ++i) {
-    std::cout << std::setw(3) << i+1 << ".  " << std::left << std::setw(7) << trains[i].Date << "|  " << std::setw(15) << trains[i].Destination << "|  " << std::setw(5) << trains[i].number.Places << std::endl;
+    std::cout << std::right << std::setw(3) << i+1 << ".  " << std::left << std::setw(7) << trains[i].Date << "|  " << std::setw(5) << trains[i].Time << "  |  " << trains[i].Destination << "  |  " << std::setw(5) << trains[i].number.Places << std::endl;
   }
   Line2();
   std::cout << " Вернуться - 0: ";
@@ -86,7 +91,38 @@ void WatchingTrains() {
   std::cin.ignore(80, '\n');
 }
 
-//
+void FindingTrains() {
+  system("clear");
+  std::string date, destination;
+  int places;
+  std::cout << "  Интерактивное окно поиска рейса:\n";
+  Line2();
+  std::cout << "  Введите дату, на которую желаете найти рейс: ";
+  CorrectDateInput(date);
+  std::cout << "  Введите пункт назначения, в который желаете поехать: ";
+  std::cin >> destination; 
+  std::cout << "  Введите количество мест, необходимое для Вашей поездки: ";
+  CorrectIntInput(places);
+  Line2();
+
+  bool flag = false;
+  for (int i = 0; i < size2; ++i) {
+    if (trains[i].Date == date && trains[i].Destination == destination && trains[i].number.Places <= places) {
+      if (!flag) {
+        std::cout << "  Возможно, вам подойдут следующие рейсы:\n";
+      }
+      std::cout << std::right << std::setw(3) << i+1 << ".  " << std::left << std::setw(7) << trains[i].Date << "|  " << std::setw(5) << trains[i].Time << "  |  " << trains[i].Destination << "  |  " << std::setw(5) << trains[i].number.Places << std::endl;
+      flag = true;
+    }
+  }
+  if (!flag) {
+    std::cout << "  Увы, у нас нет подходящих для Вас рейсов.\n";
+  }
+
+  std::cout << "\n  Вернуться - 0: ";
+  std::getchar();
+  std::cin.ignore(80, '\n');
+}
 
 void AddingTrains() {
   system("clear");
@@ -95,8 +131,88 @@ void AddingTrains() {
   ResizingArray(trains);
   std::cout << "  Введите дату нового рейса (XX.YY.ZZZZ): ";
   CorrectDateInput(trains[size2-1].Date);
+  std::cout << "  Введите время отправления нового рейса (HH:MM): ";
+  CorrectTimeInput(trains[size2-1].Time);
+  std::cout << "  Введите пункт назначения рейса: ";
+  std::cin >> trains[size2-1].Destination;
+  std::cout << "  Введите количество свободных мест на рейс: ";
+  CorrectIntInput(trains[size2-1].number.Places);
+  Line2();
+  std::cout << "  Вернуться - 0: ";
+  std::getchar();
+  std::cin.ignore(80, '\n');
+  WriteToFile2(trains);
 }
 
+void RemovingTrains() {
+  system("clear");
+  std::cout << "  Меню удаления рейса: \n";
+  std::string date, destination;
+  Line2();
+  std::cout << "  Введите дату рейса, который желаете удалить: ";
+  CorrectDateInput(date);
+  std::cout << "  Введите пункт назначения рейса, который желаете удалить: ";
+  std::cin >> destination;
+  Line2();
+
+  int index = -1;
+  for (int i = 0; i < size2; ++i) {
+    if (trains[i].Date == date && trains[i].Destination == destination) {
+      index = i;
+      break;
+    }
+  }
+  if (index >= 0) {
+    for (int i = index; i < size2 - 1; ++i) {
+      trains[i] = trains[i+1];
+    }
+    --size2;
+    WriteToFile2(trains);
+  }
+  else {
+    std::cout << "  Подобный рейс не найден.\n";
+  }
+  std::cout << "\n  Вернуться - 0: ";
+  std::getchar();
+  std::cin.ignore(80, '\n');
+}
+
+void RedactingTrains() {
+  system("clear");
+  std::cout << "  Меню редактирования рейса: \n";
+  std::string date, destination;
+  Line2();
+  std::cout << "  Введите дату рейса, который желаете редактировать: ";
+  CorrectDateInput(date);
+  std::cout << "  Введите пункт назначения рейса, который желаете редактировать: ";
+  std::cin >> destination;
+  Line2();
+
+  bool flag = false;
+  for (int i = 0; i < size2; ++i) {
+    if (trains[i].Date == date && trains[i].Destination == destination) {
+      flag = true;
+      std::cout << "  Введите новую дату: ";
+      CorrectDateInput(trains[i].Date);
+      std::cout << "  Введите новое время: ";
+      CorrectTimeInput(trains[i].Time);
+      std::cout << "  Введите новый пункт назначения: ";
+      std::cin >> trains[i].Destination;
+      std::cout << "  Введите новое количество свободных мест: ";
+      CorrectIntInput(trains[i].number.Places);
+      WriteToFile2(trains);
+      break;
+    }
+  }
+  if (!flag) {
+    std::cout << "  Подобный рейс не найден.\n";
+  }
+
+  Line2();
+  std::cout << "  Вернуться - 0: ";
+  std::getchar();
+  std::cin.ignore(80, '\n');
+}
 /*  Reliant  */
 void CorrectDateInput(std::string& Date) {
   do {
@@ -106,4 +222,20 @@ void CorrectDateInput(std::string& Date) {
       std::cout << "  Некорректный ввод. Попробуйте еще раз (XX.YY.ZZZZ): ";
     }
   } while (Date.length() > 10 || Date[2] != '.' || Date[5] != '.' || !isdigit(Date[0]) || !isdigit(Date[1]) || !isdigit(Date[3]) || !isdigit(Date[4]) || !isdigit(Date[6]) || !isdigit(Date[7])|| !isdigit(Date[8]) || !isdigit(Date[9]));
+}
+
+void CorrectTimeInput(std::string& Time) {
+  while (!(std::cin >> Time) || std::cin.peek() != '\n' || !isdigit(Time[0]) || !isdigit(Time[1]) || Time[2] != ':' || !isdigit(Time[3]) || !isdigit(Time[4]) || Time.length() > 5) {
+    std::cin.clear();
+    std::cin.ignore(255, '\n');
+    std::cout << "  Некорректный формат времени. Попробуйте еще раз: ";
+  }
+}
+
+void CorrectIntInput(int& N) {
+  while (!(std::cin >> N) || std::cin.peek() != '\n' || N < 0) {
+    std::cin.clear();
+    std::cin.ignore(255, '\n');
+    std::cout << "  Некорректный ввод. Повторите попытку: ";
+  }
 }

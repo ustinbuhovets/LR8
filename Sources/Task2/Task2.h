@@ -17,6 +17,7 @@ const char filename[33] = "../Sources/Task2/RailwayInfo.txt";
 
 typedef struct Train {
   std::string Date;
+  std::string Time;
   std::string Destination;
   union number {
     int Places;
